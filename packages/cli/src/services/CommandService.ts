@@ -6,6 +6,7 @@
 
 import { SlashCommand } from '../ui/commands/types.js';
 import { memoryCommand } from '../ui/commands/memoryCommand.js';
+import { backgroundCommand } from '../ui/commands/backgroundCommand.js';
 import { helpCommand } from '../ui/commands/helpCommand.js';
 import { clearCommand } from '../ui/commands/clearCommand.js';
 import { docsCommand } from '../ui/commands/docsCommand.js';
@@ -23,6 +24,7 @@ import { compressCommand } from '../ui/commands/compressCommand.js';
 const loadBuiltInCommands = async (): Promise<SlashCommand[]> => [
   aboutCommand,
   authCommand,
+  ...(process.env.SHOW_BACKGROUND_COMMAND ? [backgroundCommand] : []),
   chatCommand,
   clearCommand,
   compressCommand,
