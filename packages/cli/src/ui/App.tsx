@@ -780,41 +780,30 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
 
   // Effect to update the terminal title with the current status.
   useEffect(() => {
-    if (!settings.merged.showStatusInTitle) return;
+    // Respect both showStatusInTitle and hideWindowTitle settings (like setWindowTitle)
+    if (!settings.merged.showStatusInTitle || settings.merged.hideWindowTitle)
+      return;
 
     let title;
     if (streamingState === StreamingState.Idle) {
       title = originalTitleRef.current;
     } else {
-      const statusText =
-        thought?.subject || currentLoadingPhrase || 'Working...';
-      title = statusText;
+      const statusText = thought?.subject;
+      title = statusText || originalTitleRef.current;
     }
 
     // Pad the title to a fixed width to prevent taskbar icon resizing.
     const paddedTitle = title.padEnd(80, ' ');
 
-    // Use ANSI escape code to set terminal title.
-    stdout.write(`\x1b]0;${paddedTitle}\x07`);
+    // Use ANSI escape code to set terminal title (consistent with setWindowTitle).
+    stdout.write(`\x1b]2;${paddedTitle}\x07`);
   }, [
     streamingState,
     thought,
-    currentLoadingPhrase,
     settings.merged.showStatusInTitle,
+    settings.merged.hideWindowTitle,
     stdout,
   ]);
-
-  // Cleanup effect to restore the original title when the app exits.
-  useEffect(() => {
-    if (!settings.merged.showStatusInTitle) return;
-
-    // Capture the ref's value at the time the effect runs to satisfy the linter.
-    const titleToRestore = originalTitleRef.current;
-    return () => {
-      // Use the captured value in the cleanup function.
-      stdout.write(`\x1b]0;${titleToRestore}\x07`);
-    };
-  }, [settings.merged.showStatusInTitle, stdout]);
 
   useEffect(() => {
     if (config) {
