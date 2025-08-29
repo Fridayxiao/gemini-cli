@@ -91,9 +91,8 @@ Settings are organized into categories. All settings should be placed within the
   - **Default:** `false`
 
 - **`showStatusInTitle`** (boolean):
-  - **Description:** Shows the current operational status of the CLI in the terminal window's title. This is useful for seeing the current status when the window is minimized.
+  - **Description:** Shows the current operational status of the CLI in the terminal window's title.
   - **Default:** `false`
-  - **Example:** `"showStatusInTitle": true`
 
 - **`ui.hideTips`** (boolean):
   - **Description:** Hide helpful tips in the UI.
