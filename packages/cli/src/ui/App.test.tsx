@@ -1712,7 +1712,6 @@ describe('App UI', () => {
         />,
       );
 
-      // Check that no title-related writes occurred (only bracketed paste mode writes)
       const titleWrites = mockStdout.write.mock.calls.filter((call) =>
         call[0].includes('\x1b]2;'),
       );

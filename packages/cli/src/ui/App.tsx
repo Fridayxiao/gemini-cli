@@ -784,10 +784,10 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
   });
 
   const originalTitleRef = useRef(process.title);
+  const lastTitleRef = useRef<string | null>(null);
 
-  // Effect to update the terminal title with the current status.
   useEffect(() => {
-    // Respect both showStatusInTitle and hideWindowTitle settings (like setWindowTitle)
+    // Respect both showStatusInTitle and hideWindowTitle settings
     if (!settings.merged.showStatusInTitle || settings.merged.hideWindowTitle)
       return;
 
@@ -802,8 +802,12 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
     // Pad the title to a fixed width to prevent taskbar icon resizing.
     const paddedTitle = title.padEnd(80, ' ');
 
-    // Use ANSI escape code to set terminal title (consistent with setWindowTitle).
-    stdout.write(`\x1b]2;${paddedTitle}\x07`);
+    // Only update the title if it's different from the last value we set
+    if (lastTitleRef.current !== paddedTitle) {
+      lastTitleRef.current = paddedTitle;
+      stdout.write(`\x1b]2;${paddedTitle}\x07`);
+    }
+    // Note: We don't need to reset the window title on exit because Gemini CLI is already doing that elsewhere 
   }, [
     streamingState,
     thought,
